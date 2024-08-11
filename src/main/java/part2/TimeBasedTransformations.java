@@ -1,8 +1,7 @@
 package part2;
 
 import com.google.common.collect.Iterables;
-import org.apache.flink.api.common.eventtime.SerializableTimestampAssigner;
-import org.apache.flink.api.common.eventtime.WatermarkStrategy;
+import org.apache.flink.api.common.eventtime.*;
 import org.apache.flink.streaming.api.datastream.AllWindowedStream;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -74,7 +73,54 @@ public class TimeBasedTransformations {
         env.execute();
     }
 
+    // custom watermarks
+    static class BoundedOutOfOrdernessGenerator implements WatermarkGenerator<ShoppingCartEvent> {
+        private long maxDelay;
+        private long currentMaxTimestamp = 0L;
+
+        public BoundedOutOfOrdernessGenerator(long maxDelay) {
+            this.maxDelay = maxDelay;
+        }
+
+        @Override
+        public void onEvent(ShoppingCartEvent event, long eventTimestamp, WatermarkOutput output) {
+            if (event.getTime().toEpochMilli() > currentMaxTimestamp) {
+                currentMaxTimestamp = event.getTime().toEpochMilli();
+                output.emitWatermark(new Watermark(event.getTime().toEpochMilli() - maxDelay));
+            }
+            // we may or may not emit watermarks
+        }
+
+        // 200ms
+        @Override
+        public void onPeriodicEmit(WatermarkOutput output) {
+            output.emitWatermark(new Watermark(currentMaxTimestamp - maxDelay - 1));
+        }
+    }
+
+    public static void demoEventTimeCustom() throws Exception {
+        //  control how often Flink calls onPeriodicEmit
+        env.getConfig().setAutoWatermarkInterval(100L); // call onPeriodicEmit every 100 milliseconds
+
+        DataStream<ShoppingCartEvent> shoppingCartEventsET = shoppingcartEvents
+                .assignTimestampsAndWatermarks(
+                        WatermarkStrategy.<ShoppingCartEvent>forGenerator(ctx ->
+                                new BoundedOutOfOrdernessGenerator(500)
+                        ).withTimestampAssigner(
+                                new SerializableTimestampAssigner<ShoppingCartEvent>() {
+                                    @Override
+                                    public long extractTimestamp(ShoppingCartEvent element, long recordTimestamp) {
+                                        return element.getTime().toEpochMilli();
+                                    }
+                                }
+                        )
+                );
+
+        shoppingCartEventsET.print();
+        env.execute();
+    }
+
     public static void main(String[] args) throws Exception {
-        demoEventTime();
+        demoEventTimeCustom();
     }
 }
