@@ -7,6 +7,7 @@ import org.apache.flink.streaming.api.functions.windowing.ProcessAllWindowFuncti
 import org.apache.flink.streaming.api.windowing.assigners.TumblingProcessingTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.api.windowing.triggers.CountTrigger;
+import org.apache.flink.streaming.api.windowing.triggers.PurgingTrigger;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.util.Collector;
 import shopping.ShoppingCartEvent;
@@ -30,7 +31,7 @@ public class Triggers {
         }
     }
 
-    public static void demoFirstTrigger() throws Exception {
+    public static void demoCountTrigger() throws Exception {
         DataStream<String> shoppingCarEvents = env
                 .addSource(new ShoppingCartEventsGenerator(500, 2)) // 2 events per second
                 .windowAll(TumblingProcessingTimeWindows.of(Time.seconds(5))) // 10 events per window
@@ -41,8 +42,27 @@ public class Triggers {
         env.execute();
     }
 
+    // purging trigger - clear the window when it fires
+    public static void demoPurgingTrigger() throws Exception {
+        DataStream<String> shoppingCarEvents = env
+                .addSource(new ShoppingCartEventsGenerator(500, 2)) // 2 events per second
+                .windowAll(TumblingProcessingTimeWindows.of(Time.seconds(5))) // 10 events per window
+                .trigger(PurgingTrigger.of(CountTrigger.of(5))) // the window function runs every 5 elements
+                .process(new CountByWindowV2()); // runs twice for the same window
+
+        shoppingCarEvents.print();
+        env.execute();
+    }
+
+    /*
+      Other triggers:
+      - EventTimeTrigger - happens by default when watermark is larger >  window end time (automatic for event time windows)
+      - ProcessingTimeTrigger - fires when the current system time > window end time (automatic for processing time windows)
+      - CustomTriggers - powerful APIs for custom firing behavior
+     */
+
     public static void main(String[] args) throws Exception {
-        demoFirstTrigger();
+        demoPurgingTrigger();
     }
 
 }

@@ -57,6 +57,13 @@ public class TimeBasedTransformations {
         env.execute();
     }
 
+    /*
+        With event time
+        - we NEED to care about handling late data - done with Watermarks
+        - we don't care about Flink internal time
+        - we might see faster results
+        - same events + different runs => same results
+     */
     public static void demoEventTime() throws Exception {
         AllWindowedStream<ShoppingCartEvent, TimeWindow> groupedEventsByWindow = shoppingcartEvents.assignTimestampsAndWatermarks(
                 WatermarkStrategy.<ShoppingCartEvent>forBoundedOutOfOrderness(Duration.ofMillis(500))
@@ -75,7 +82,7 @@ public class TimeBasedTransformations {
 
     // custom watermarks
     static class BoundedOutOfOrdernessGenerator implements WatermarkGenerator<ShoppingCartEvent> {
-        private long maxDelay;
+        private final long maxDelay;
         private long currentMaxTimestamp = 0L;
 
         public BoundedOutOfOrdernessGenerator(long maxDelay) {
