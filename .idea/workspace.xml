@@ -5,9 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="38908952-8689-4e6c-9f72-6bdefa030c12" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/part2/Partitions.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/part2/KeyedState.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/part3/RichFunctions.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/part2/MultipleStreams.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/part2/MultipleStreams.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,6 +55,7 @@
     "Application.MultipleStreams.executor": "Run",
     "Application.Partitions.executor": "Run",
     "Application.Playground.executor": "Run",
+    "Application.RichFunctions.executor": "Run",
     "Application.TimeBasedTransformations.executor": "Run",
     "Application.WindowFunctions.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -71,7 +72,7 @@
       <recent name="$PROJECT_DIR$/src/main/java" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Partitions">
+  <component name="RunManager" selected="Application.RichFunctions">
     <configuration name="MultipleStreams" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="part2.MultipleStreams" />
       <module name="flinkjava" />
@@ -98,12 +99,12 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Playground" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="playground.Playground" />
+    <configuration name="RichFunctions" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="part3.RichFunctions" />
       <module name="flinkjava" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="playground.*" />
+          <option name="PATTERN" value="part3.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -139,11 +140,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.RichFunctions" />
         <item itemvalue="Application.Partitions" />
         <item itemvalue="Application.MultipleStreams" />
         <item itemvalue="Application.TimeBasedTransformations" />
         <item itemvalue="Application.WindowFunctions" />
-        <item itemvalue="Application.Playground" />
       </list>
     </recent_temporary>
   </component>
